@@ -4,12 +4,6 @@ const SHEET_EDIT_URL =
   "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/edit?gid=0#gid=0";
 const SHEET_QUERY_PARAM = "sheet";
 const APPS_SCRIPT_URL = window.APP_CONFIG?.appsScriptUrl || "";
-const shirtAssets = {
-  red: "./shirt-red-sticker.svg",
-  blue: "./shirt-sticker.svg",
-  orange: "./shirt-orange-sticker.svg",
-  pink: "./shirt-pink-sticker.svg",
-};
 const memberAssets = {
   すいば: "./member-suiba.png",
   聖成: "./member-seisei.png",
@@ -163,8 +157,6 @@ function renderMembers(members) {
     const link = fragment.querySelector(".member-link");
     const linkLabel = link.querySelector("span");
     const avatarImage = fragment.querySelector(".member-avatar-image");
-    const shirtImage = fragment.querySelector(".member-shirt-image");
-    const asset = shirtAssets[member.color] || shirtAssets.blue;
     const avatarAsset = memberAssets[member.name];
 
     card.dataset.color = member.color;
@@ -173,8 +165,6 @@ function renderMembers(members) {
     name.textContent = member.name;
     avatarImage.src = avatarAsset;
     avatarImage.alt = `${member.name} のメンバーステッカー`;
-    shirtImage.src = asset;
-    shirtImage.alt = `${member.name} のTシャツステッカー`;
     if (member.url) {
       link.href = member.url;
       link.setAttribute("aria-label", `${member.name} の Gemini Canvas を開く`);

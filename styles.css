@@ -169,7 +169,7 @@ h2,
 h3,
 .member-name {
   margin: 0;
-  font-family: "Bebas Neue", sans-serif;
+  font-family: "Bebas Neue", "Noto Sans JP", sans-serif;
   letter-spacing: 0.03em;
 }
 
@@ -241,7 +241,8 @@ h3 {
   pointer-events: none;
 }
 
-.fv-sticker {
+.fv-sticker,
+.fv-shirt {
   position: absolute;
   display: block;
   pointer-events: none;
@@ -303,6 +304,39 @@ h3 {
   top: 5%;
   transform: rotate(9deg);
   animation-delay: 550ms;
+}
+
+.fv-shirt {
+  z-index: 2;
+  width: clamp(74px, 8vw, 102px);
+}
+
+.fv-shirt-red {
+  left: 3%;
+  top: 31%;
+  transform: rotate(13deg);
+  animation-delay: 620ms;
+}
+
+.fv-shirt-blue {
+  right: 5%;
+  top: 29%;
+  transform: rotate(-12deg);
+  animation-delay: 680ms;
+}
+
+.fv-shirt-orange {
+  left: 29%;
+  bottom: 4%;
+  transform: rotate(-9deg);
+  animation-delay: 740ms;
+}
+
+.fv-shirt-pink {
+  right: 32%;
+  bottom: 3%;
+  transform: rotate(11deg);
+  animation-delay: 800ms;
 }
 
 .section-intro {
@@ -509,18 +543,14 @@ h3 {
 }
 
 .member-name {
-  font-family: "Mochiy Pop One", sans-serif;
-  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
-  line-height: 1.15;
-  letter-spacing: 0.02em;
-  color: var(--white);
-  text-shadow:
-    -2px -2px 0 var(--ink),
-    2px -2px 0 var(--ink),
-    -2px 2px 0 var(--ink),
-    2px 2px 0 var(--ink),
-    0 8px 18px rgba(17, 17, 17, 0.18);
-  transform: rotate(-2deg);
+  font-family: "Bebas Neue", "Noto Sans JP", sans-serif;
+  font-size: clamp(1.18rem, 1.8vw, 1.6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  text-shadow: none;
+  transform: none;
 }
 
 .member-visual {
@@ -563,20 +593,6 @@ h3 {
   transform: translateX(-50%) rotate(-1deg);
 }
 
-.member-shirt-image {
-  width: 58px;
-  max-height: 58px;
-  object-fit: contain;
-  object-position: center;
-  position: absolute;
-  right: -8px;
-  top: 2px;
-  z-index: 2;
-  opacity: 1;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.16));
-  transform: rotate(12deg);
-}
-
 .member-link {
   justify-self: stretch;
   width: 100%;
@@ -589,22 +605,6 @@ h3 {
   letter-spacing: 0.08em;
   position: relative;
   z-index: 3;
-}
-
-.member-card[data-color="red"] .member-name {
-  color: #fff7f4;
-}
-
-.member-card[data-color="blue"] .member-name {
-  color: #ffffff;
-}
-
-.member-card[data-color="orange"] .member-name {
-  color: #fffdf7;
-}
-
-.member-card[data-color="pink"] .member-name {
-  color: #fff7fe;
 }
 
 @media (max-width: 1040px) {
@@ -702,6 +702,30 @@ h3 {
     top: 7%;
   }
 
+  .fv-shirt {
+    width: 64px;
+  }
+
+  .fv-shirt-red {
+    left: 2%;
+    top: 32%;
+  }
+
+  .fv-shirt-blue {
+    right: 2%;
+    top: 32%;
+  }
+
+  .fv-shirt-orange {
+    left: 25%;
+    bottom: 4%;
+  }
+
+  .fv-shirt-pink {
+    right: 23%;
+    bottom: 3%;
+  }
+
   .member-card {
     padding: 18px;
   }
@@ -719,10 +743,6 @@ h3 {
     min-height: 170px;
   }
 
-  .member-shirt-image {
-    width: 48px;
-    max-height: 48px;
-  }
 }
 
 @keyframes card-pop {
@@ -752,7 +772,8 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fv-sticker {
+  .fv-sticker,
+  .fv-shirt {
     animation: none;
   }
 }
