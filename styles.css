@@ -398,6 +398,11 @@ h3 {
   cursor: pointer;
 }
 
+.update-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .member-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -464,6 +469,12 @@ h3 {
   align-items: start;
   position: relative;
   z-index: 3;
+}
+
+.member-link.is-empty {
+  opacity: 0.32;
+  pointer-events: none;
+  box-shadow: none;
 }
 
 .member-heading {

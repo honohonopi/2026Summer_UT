@@ -3,7 +3,7 @@ const SHEET_CSV_URL =
 const SHEET_EDIT_URL =
   "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/edit?gid=0#gid=0";
 const SHEET_QUERY_PARAM = "sheet";
-const DRAFT_STORAGE_KEY = "lit-camp-canvas-links";
+const APPS_SCRIPT_URL = window.APP_CONFIG?.appsScriptUrl || "";
 const shirtAssets = {
   red: "./shirt-red-sticker.svg",
   blue: "./shirt-sticker.svg",
@@ -65,7 +65,7 @@ async function loadMembers() {
     const parsed = parseCsv(csvText);
     const members = parsed
       .map(normalizeMember)
-      .filter((member) => member.name && member.url);
+      .filter((member) => member.name);
 
     if (!members.length) {
       throw new Error("No valid rows in CSV");
@@ -143,26 +143,6 @@ function normalizeMember(row) {
   };
 }
 
-function loadDrafts() {
-  try {
-    return JSON.parse(window.localStorage.getItem(DRAFT_STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function saveDrafts(drafts) {
-  window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
-}
-
-function applyDrafts(members) {
-  const drafts = loadDrafts();
-  return members.map((member) => ({
-    ...member,
-    url: drafts[member.name] || member.url,
-  }));
-}
-
 function renderMembers(members) {
   const grid = document.querySelector("#members");
   const template = document.querySelector("#member-card-template");
@@ -174,6 +154,7 @@ function renderMembers(members) {
     const card = fragment.querySelector(".member-card");
     const name = fragment.querySelector(".member-name");
     const link = fragment.querySelector(".member-link");
+    const linkLabel = link.querySelector("span");
     const shirtImage = fragment.querySelector(".member-shirt-image");
     const asset = shirtAssets[member.color] || shirtAssets.blue;
 
@@ -183,8 +164,15 @@ function renderMembers(members) {
     name.textContent = member.name;
     shirtImage.src = asset;
     shirtImage.alt = `${member.name} のTシャツステッカー`;
-    link.href = member.url;
-    link.setAttribute("aria-label", `${member.name} の Gemini Canvas を開く`);
+    if (member.url) {
+      link.href = member.url;
+      link.setAttribute("aria-label", `${member.name} の Gemini Canvas を開く`);
+    } else {
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
+      link.classList.add("is-empty");
+      linkLabel.textContent = "OPEN";
+    }
 
     grid.appendChild(fragment);
   });
@@ -209,16 +197,29 @@ function syncFormUrl() {
   input.value = selected?.url || "";
 }
 
+async function submitMemberUrl(name, url) {
+  if (!APPS_SCRIPT_URL) {
+    throw new Error("Apps Script URL is not configured");
+  }
+
+  await fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: new URLSearchParams({ name, url }),
+  });
+}
+
 function bindUpdateForm() {
   const form = document.querySelector("#member-update-form");
   const select = document.querySelector("#member-name-select");
   const input = document.querySelector("#member-url-input");
+  const submitButton = form.querySelector(".update-submit");
   const sheetLink = document.querySelector(".update-sheet-link");
 
   sheetLink.href = SHEET_EDIT_URL;
   select.addEventListener("change", syncFormUrl);
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const name = select.value;
     const url = input.value.trim();
@@ -226,9 +227,20 @@ function bindUpdateForm() {
       return;
     }
 
-    const drafts = loadDrafts();
-    drafts[name] = url;
-    saveDrafts(drafts);
+    submitButton.disabled = true;
+    submitButton.textContent = "SENDING";
+
+    try {
+      await submitMemberUrl(name, url);
+    } catch (error) {
+      console.error(error);
+      submitButton.textContent = "ERROR";
+      window.setTimeout(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = "APPLY";
+      }, 1800);
+      return;
+    }
 
     currentMembers = currentMembers.map((member) =>
       member.name === name ? { ...member, url } : member,
@@ -242,11 +254,17 @@ function bindUpdateForm() {
       void card.offsetWidth;
       card.classList.add("is-updated");
     }
+
+    submitButton.textContent = "DONE";
+    window.setTimeout(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = "APPLY";
+    }, 1400);
   });
 }
 
 loadMembers().then((members) => {
-  currentMembers = applyDrafts(members);
+  currentMembers = members;
   renderMemberOptions(currentMembers);
   renderMembers(currentMembers);
   bindUpdateForm();
