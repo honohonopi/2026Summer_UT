@@ -1,48 +1,57 @@
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/export?format=csv&gid=0";
+const SHEET_EDIT_URL =
+  "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/edit?gid=0#gid=0";
 const SHEET_QUERY_PARAM = "sheet";
+const DRAFT_STORAGE_KEY = "lit-camp-canvas-links";
+const shirtAssets = {
+  red: "./shirt-red-sticker.svg",
+  blue: "./shirt-sticker.svg",
+  orange: "./shirt-orange-sticker.svg",
+  pink: "./shirt-pink-sticker.svg",
+};
 
 const fallbackMembers = [
   {
     name: "すいば",
     color: "red",
     url: "https://example.com/suiba",
-    comment: "赤Tシャツ担当。Gemini Canvas の共有リンクをここに入れる。",
+    comment: "",
   },
   {
     name: "聖成",
     color: "blue",
     url: "https://example.com/seisei",
-    comment: "青Tシャツ担当。公開後は各自のリンク差し替えだけで運用可能。",
+    comment: "",
   },
   {
     name: "モナ",
     color: "orange",
     url: "https://example.com/mona",
-    comment: "オレンジTシャツ担当。コメント欄はひとこと紹介に使える。",
+    comment: "",
   },
   {
     name: "ゆうり",
     color: "blue",
     url: "https://example.com/yuuri",
-    comment: "青Tシャツ担当。カードの色はTシャツ色と連動。",
+    comment: "",
   },
   {
     name: "あずき",
     color: "pink",
     url: "https://example.com/azuki",
-    comment: "ピンクTシャツ担当。CSVに name / color / url / comment を持たせる。",
+    comment: "",
   },
 ];
 
 const colorMap = new Set(["red", "blue", "orange", "pink"]);
+let currentMembers = [];
 
 async function loadMembers() {
   const sheetUrl =
     new URLSearchParams(window.location.search).get(SHEET_QUERY_PARAM) || SHEET_CSV_URL;
 
   if (!sheetUrl) {
-    setSourceLabel("ローカルのサンプルデータを表示中");
     return fallbackMembers;
   }
 
@@ -62,11 +71,9 @@ async function loadMembers() {
       throw new Error("No valid rows in CSV");
     }
 
-    setSourceLabel("公開Googleスプレッドシートのデータを表示中");
     return members;
   } catch (error) {
     console.error(error);
-    setSourceLabel("CSVの読み込みに失敗したため、サンプルデータを表示中");
     return fallbackMembers;
   }
 }
@@ -132,8 +139,28 @@ function normalizeMember(row) {
     name: row.name || "",
     color,
     url: row.url || "",
-    comment: row.comment || "Gemini Canvas の共有リンクをチェック。",
+    comment: row.comment || "",
   };
+}
+
+function loadDrafts() {
+  try {
+    return JSON.parse(window.localStorage.getItem(DRAFT_STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveDrafts(drafts) {
+  window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
+}
+
+function applyDrafts(members) {
+  const drafts = loadDrafts();
+  return members.map((member) => ({
+    ...member,
+    url: drafts[member.name] || member.url,
+  }));
 }
 
 function renderMembers(members) {
@@ -146,13 +173,16 @@ function renderMembers(members) {
     const fragment = template.content.cloneNode(true);
     const card = fragment.querySelector(".member-card");
     const name = fragment.querySelector(".member-name");
-    const comment = fragment.querySelector(".member-comment");
     const link = fragment.querySelector(".member-link");
+    const shirtImage = fragment.querySelector(".member-shirt-image");
+    const asset = shirtAssets[member.color] || shirtAssets.blue;
 
     card.dataset.color = member.color;
+    card.dataset.memberName = member.name;
     card.style.animationDelay = `${index * 90}ms`;
     name.textContent = member.name;
-    comment.textContent = member.comment;
+    shirtImage.src = asset;
+    shirtImage.alt = `${member.name} のTシャツステッカー`;
     link.href = member.url;
     link.setAttribute("aria-label", `${member.name} の Gemini Canvas を開く`);
 
@@ -160,9 +190,65 @@ function renderMembers(members) {
   });
 }
 
-function setSourceLabel(text) {
-  const label = document.querySelector("#data-source-label");
-  label.textContent = text;
+function renderMemberOptions(members) {
+  const select = document.querySelector("#member-name-select");
+  select.innerHTML = "";
+
+  members.forEach((member) => {
+    const option = document.createElement("option");
+    option.value = member.name;
+    option.textContent = member.name;
+    select.appendChild(option);
+  });
 }
 
-loadMembers().then(renderMembers);
+function syncFormUrl() {
+  const select = document.querySelector("#member-name-select");
+  const input = document.querySelector("#member-url-input");
+  const selected = currentMembers.find((member) => member.name === select.value);
+  input.value = selected?.url || "";
+}
+
+function bindUpdateForm() {
+  const form = document.querySelector("#member-update-form");
+  const select = document.querySelector("#member-name-select");
+  const input = document.querySelector("#member-url-input");
+  const sheetLink = document.querySelector(".update-sheet-link");
+
+  sheetLink.href = SHEET_EDIT_URL;
+  select.addEventListener("change", syncFormUrl);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = select.value;
+    const url = input.value.trim();
+    if (!name || !url) {
+      return;
+    }
+
+    const drafts = loadDrafts();
+    drafts[name] = url;
+    saveDrafts(drafts);
+
+    currentMembers = currentMembers.map((member) =>
+      member.name === name ? { ...member, url } : member,
+    );
+    renderMembers(currentMembers);
+    syncFormUrl();
+
+    const card = document.querySelector(`[data-member-name="${CSS.escape(name)}"]`);
+    if (card) {
+      card.classList.remove("is-updated");
+      void card.offsetWidth;
+      card.classList.add("is-updated");
+    }
+  });
+}
+
+loadMembers().then((members) => {
+  currentMembers = applyDrafts(members);
+  renderMemberOptions(currentMembers);
+  renderMembers(currentMembers);
+  bindUpdateForm();
+  syncFormUrl();
+});
