@@ -10,6 +10,13 @@ const shirtAssets = {
   orange: "./shirt-orange-sticker.svg",
   pink: "./shirt-pink-sticker.svg",
 };
+const memberAssets = {
+  すいば: "./member-suiba.png",
+  聖成: "./member-seisei.png",
+  モナ: "./member-mona.png",
+  ゆうり: "./member-yuuri.png",
+  あずき: "./member-azuki.png",
+};
 
 const fallbackMembers = [
   {
@@ -155,13 +162,17 @@ function renderMembers(members) {
     const name = fragment.querySelector(".member-name");
     const link = fragment.querySelector(".member-link");
     const linkLabel = link.querySelector("span");
+    const avatarImage = fragment.querySelector(".member-avatar-image");
     const shirtImage = fragment.querySelector(".member-shirt-image");
     const asset = shirtAssets[member.color] || shirtAssets.blue;
+    const avatarAsset = memberAssets[member.name];
 
     card.dataset.color = member.color;
     card.dataset.memberName = member.name;
     card.style.animationDelay = `${index * 90}ms`;
     name.textContent = member.name;
+    avatarImage.src = avatarAsset;
+    avatarImage.alt = `${member.name} のメンバーステッカー`;
     shirtImage.src = asset;
     shirtImage.alt = `${member.name} のTシャツステッカー`;
     if (member.url) {
