@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LiT Camp 2026 | Gemini Canvas Showcase</title>
+    <meta
+      name="description"
+      content="LiT Camp 2026 メンバーの Gemini Canvas サイトをまとめたショーケース。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <main class="page-shell">
+      <section class="hero">
+        <div class="hero-copy sticker-card">
+          <p class="eyebrow">LiT Camp 2026</p>
+          <h1>Gemini Canvas Showcase</h1>
+          <p class="lead">
+            キャンプメンバーが作ったサイトを、1ページに集約。<br />
+            各メンバーは自分の共有リンクだけ更新すればOK。
+          </p>
+          <div class="hero-actions">
+            <a class="cta primary" href="#members">メンバー一覧を見る</a>
+            <a class="cta secondary" href="#how-to-update">更新方法</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img
+            src="./kv.png"
+            alt="LiT Camp 2026 のキービジュアル"
+            class="kv-image"
+          />
+        </div>
+      </section>
+
+      <section class="section-head">
+        <p class="eyebrow">Members</p>
+        <h2>Canvas Links</h2>
+        <p id="data-source-label" class="source-label">ローカルのサンプルデータを表示中</p>
+      </section>
+
+      <section id="members" class="member-grid" aria-live="polite"></section>
+
+      <section class="notes-grid">
+        <article id="how-to-update" class="sticker-card note-card">
+          <p class="eyebrow accent-green">How To Update</p>
+          <h3>更新フロー</h3>
+          <ol>
+            <li>Googleスプレッドシートにメンバー名と共有リンクを1行ずつ用意する</li>
+            <li>シートを「ウェブに公開」してCSV URLを取得する</li>
+            <li><code>app.js</code> の <code>SHEET_CSV_URL</code> に貼る</li>
+            <li>各メンバーは自分の行のリンクを差し替えるだけで反映される</li>
+          </ol>
+        </article>
+
+        <article class="sticker-card note-card">
+          <p class="eyebrow accent-blue">CSV Columns</p>
+          <h3>必要な列</h3>
+          <p>
+            <code>name</code>, <code>color</code>, <code>url</code>,
+            <code>comment</code>
+          </p>
+          <p class="small-text">
+            color は <code>red</code>, <code>blue</code>, <code>orange</code>,
+            <code>pink</code> のいずれかを推奨。
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <template id="member-card-template">
+      <article class="member-card sticker-card">
+        <div class="member-meta">
+          <span class="shirt-chip"></span>
+          <p class="member-name"></p>
+        </div>
+        <p class="member-comment"></p>
+        <a class="member-link" target="_blank" rel="noreferrer">Canvas を開く</a>
+      </article>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
