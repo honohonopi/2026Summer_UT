@@ -1,7 +1,5 @@
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/export?format=csv&gid=0";
-const SHEET_EDIT_URL =
-  "https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/edit?gid=0#gid=0";
 const SHEET_QUERY_PARAM = "sheet";
 const APPS_SCRIPT_URL = window.APP_CONFIG?.appsScriptUrl || "";
 const memberAssets = {
@@ -215,9 +213,7 @@ function bindUpdateForm() {
   const select = document.querySelector("#member-name-select");
   const input = document.querySelector("#member-url-input");
   const submitButton = form.querySelector(".update-submit");
-  const sheetLink = document.querySelector(".update-sheet-link");
 
-  sheetLink.href = SHEET_EDIT_URL;
   select.addEventListener("change", syncFormUrl);
 
   form.addEventListener("submit", async (event) => {

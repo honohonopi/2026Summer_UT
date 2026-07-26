@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>team D</title>
+    <title>teamD</title>
     <meta
       name="description"
       content="LiT Camp 2026 メンバーの Gemini Canvas サイトを集約したショーケース。"
@@ -24,63 +24,52 @@
     <main class="page-shell">
       <section class="hero-grid">
         <div class="hero-copy">
-          <h1><span>team</span><strong>D</strong></h1>
+          <p class="hero-team">teamD</p>
+          <h1>
+            <span class="hero-title-primary">ダークネスドラゴンユニコーンウルトラマックスver16</span>
+            <span class="hero-title-secondary">おかきトッピング味噌汁サラダ付き</span>
+          </h1>
         </div>
 
         <div class="hero-stage" aria-hidden="true">
-          <img src="./fv-sticker-13.svg" alt="" class="fv-sticker fv-sticker-13" aria-hidden="true" />
-          <img src="./fv-sticker-14.svg" alt="" class="fv-sticker fv-sticker-14" aria-hidden="true" />
-          <img src="./fv-sticker-16.svg" alt="" class="fv-sticker fv-sticker-16" aria-hidden="true" />
-          <img src="./fv-sticker-17.svg" alt="" class="fv-sticker fv-sticker-17" aria-hidden="true" />
-          <img src="./fv-sticker-18.svg" alt="" class="fv-sticker fv-sticker-18" aria-hidden="true" />
-          <img src="./fv-sticker-19.svg" alt="" class="fv-sticker fv-sticker-19" aria-hidden="true" />
-          <img src="./fv-sticker-20.svg" alt="" class="fv-sticker fv-sticker-20" aria-hidden="true" />
-          <img src="./shirt-red-sticker.svg" alt="" class="fv-shirt fv-shirt-red" aria-hidden="true" />
-          <img src="./shirt-sticker.svg" alt="" class="fv-shirt fv-shirt-blue" aria-hidden="true" />
-          <img src="./shirt-orange-sticker.svg" alt="" class="fv-shirt fv-shirt-orange" aria-hidden="true" />
-          <img src="./shirt-pink-sticker.svg" alt="" class="fv-shirt fv-shirt-pink" aria-hidden="true" />
+          <img src="./hero-decor-12.png" alt="" class="hero-decor hero-decor-12" />
+          <img src="./hero-decor-13.png" alt="" class="hero-decor hero-decor-13" />
+          <img src="./hero-decor-14.png" alt="" class="hero-decor hero-decor-14" />
+          <img src="./hero-decor-15.png" alt="" class="hero-decor hero-decor-15" />
+          <img src="./hero-decor-16.png" alt="" class="hero-decor hero-decor-16" />
+          <img src="./hero-decor-18.png" alt="" class="hero-decor hero-decor-18" />
+          <img src="./hero-decor-19.png" alt="" class="hero-decor hero-decor-19" />
+          <img src="./hero-decor-20.png" alt="" class="hero-decor hero-decor-20" />
         </div>
       </section>
 
-      <section class="section-intro">
-        <div>
-          <h2>Canvas Lineup</h2>
-        </div>
-      </section>
+      <div class="content-shell">
+        <section class="update-panel" id="update">
+          <div class="update-panel-head">
+            <p class="update-title">EDIT LINK</p>
+          </div>
+          <form class="update-form" id="member-update-form">
+            <label class="update-field">
+              <span>NAME</span>
+              <select id="member-name-select" name="member"></select>
+            </label>
+            <label class="update-field update-field-wide">
+              <span>URL</span>
+              <input
+                id="member-url-input"
+                name="url"
+                type="url"
+                inputmode="url"
+                placeholder="https://..."
+                autocomplete="off"
+              />
+            </label>
+            <button class="update-submit" type="submit">APPLY</button>
+          </form>
+        </section>
 
-      <section class="update-panel" id="update">
-        <div class="update-panel-head">
-          <p class="update-title">MY LINK</p>
-          <a
-            class="update-sheet-link"
-            href="https://docs.google.com/spreadsheets/d/1VqFrjrXuGtHOBU8Eym29aKhHqNTgLpVenNryhJ2nNC0/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noreferrer"
-          >
-            SHEET
-          </a>
-        </div>
-        <form class="update-form" id="member-update-form">
-          <label class="update-field">
-            <span>NAME</span>
-            <select id="member-name-select" name="member"></select>
-          </label>
-          <label class="update-field update-field-wide">
-            <span>URL</span>
-            <input
-              id="member-url-input"
-              name="url"
-              type="url"
-              inputmode="url"
-              placeholder="https://..."
-              autocomplete="off"
-            />
-          </label>
-          <button class="update-submit" type="submit">APPLY</button>
-        </form>
-      </section>
-
-      <section id="members" class="member-grid" aria-live="polite"></section>
+        <section id="members" class="member-grid" aria-live="polite"></section>
+      </div>
     </main>
 
     <template id="member-card-template">
